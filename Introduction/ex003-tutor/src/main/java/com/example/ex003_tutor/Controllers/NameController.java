@@ -11,12 +11,12 @@ public class NameController {
     private ContrarioService contrarioService;
 
 
-    @RequestMapping(value = "/{name}", method={RequestMethod.POST})
+    @PostMapping(value = "/{name}")
     public String nomeContrario(@PathVariable String name) {
         return contrarioService.contrarioVar(name);
     }
 
-    @RequestMapping(value = "/{name}", method={RequestMethod.GET})
+    @GetMapping(value = "/{name}")
     public String nomeNormal(@PathVariable String name){
         return name;
     }
