@@ -3,6 +3,9 @@ package com.example.demo.service;
 import com.example.demo.entity.Author;
 import com.example.demo.entity.Book;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.time.LocalDate;
 import java.util.HashMap;
@@ -51,5 +54,24 @@ public class BookService {
     public Book editPublishedDate(int id, LocalDate publishedDate){
         mapBook.get(id).setPublishedDate(publishedDate);
         return mapBook.get(id);
+    }
+
+    public Book editBook(int id, Author author, String title, String isbn, LocalDate publishedDate) {
+        Book b = null;
+        if (mapBook.containsKey(id)) {
+            if (author != null) {
+                b = editAuthor(id, author);
+            }
+            if (title != null) {
+                b = editTitle(id, title);
+            }
+            if (isbn != null) {
+                b = editISBN(id, isbn);
+            }
+            if (publishedDate != null) {
+                b = editPublishedDate(id, publishedDate);
+            }
+        }
+    return b;
     }
 }

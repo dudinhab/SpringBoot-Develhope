@@ -55,22 +55,8 @@ public class BookController {
 
     @PatchMapping("update/{id}")
     public ResponseEntity editAuthor(@PathVariable("id") int id, @RequestBody(required = false) Author author, @RequestParam(required = false) String title, @RequestParam(required = false) String isbn, @RequestParam(required = false) LocalDate publishedDate) {
-        Map<Integer, Book> bookMap = bookService.getMapBook();
-
-        if (bookMap.containsKey(id)) {
-            Book b = null;
-            if (author != null) {
-                b = bookService.editAuthor(id, author);
-            }
-            if (title != null) {
-                b = bookService.editTitle(id, title);
-            }
-            if (isbn != null) {
-                b = bookService.editISBN(id, isbn);
-            }
-            if (publishedDate != null) {
-                b = bookService.editPublishedDate(id, publishedDate);
-            }
+        Book b = bookService.editBook(id, author, title, isbn, publishedDate);
+        if (b!=null) {
             return ResponseEntity.ok(b);
         }
         return ResponseEntity.status(404).body("ID not found!");
