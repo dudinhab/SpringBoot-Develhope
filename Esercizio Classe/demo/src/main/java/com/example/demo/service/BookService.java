@@ -1,77 +1,93 @@
 package com.example.demo.service;
 
+import com.example.demo.mapper.BookMapper;
+import com.example.demo.model.BookDTO;
 import com.example.demo.entity.Author;
 import com.example.demo.entity.Book;
+import com.example.demo.repository.BookRepository;
+import com.mysql.cj.util.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.time.LocalDate;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class BookService {
-    Map<Integer, Book> mapBook = new HashMap<>();
-    AtomicInteger autoIncrement = new AtomicInteger();
+    @Autowired
+    BookRepository bookRepository;
+    @Autowired
+    BookMapper bookMapper;
 
-    public Book addBook(Book b) {
-        int id = autoIncrement.incrementAndGet();
-        b.setId(id);
-        mapBook.put(id, b);
-        return mapBook.get(id);
+    public BookDTO addBook(BookDTO bookDTO) throws Exception {
+        if (StringUtils.isNullOrEmpty(bookDTO.getTitle())) {
+            throw new Exception("Title null!");
+        }
+        Book newBook = bookRepository.save(bookMapper.bookDTOFromBook(bookDTO));
+        return bookMapper.bookFromBookDTO(newBook);
     }
 
-    public Book getBookById(int id){
-        return mapBook.get(id);
+    public BookDTO getBookById(Integer id) {
+        return bookMapper.bookFromBookDTO(bookRepository.getReferenceById(id));
     }
 
-    public Map<Integer, Book> getMapBook(){
-        return this.mapBook;
+    public List<BookDTO> getListBookDTO() {
+        List<Book> listBook = bookRepository.findAll();
+        List<BookDTO> listBookDTO = new ArrayList<>();
+        listBook.forEach(i -> bookMapper.bookFromBookDTO(i));
+        return listBookDTO;
     }
 
-    public Book remBookByID(int id){
-        return mapBook.remove(id);
+    public boolean remBookByID(int id) {
+        bookRepository.deleteById(id);
+        return true;
     }
 
-    public Book editAuthor(int id, Author author){
-        mapBook.get(id).setAuthor(author);
-        return mapBook.get(id);
+    public BookDTO editAuthor(int id, Author author) {
+        Book book = bookRepository.getReferenceById(id);
+        book.setAuthor(author);
+        BookDTO newBookDTO = bookMapper.bookFromBookDTO(bookRepository.save(book));
+        return newBookDTO;
     }
 
-    public Book editTitle(int id, String title){
-        mapBook.get(id).setTitle(title);
-        return mapBook.get(id);
+    public BookDTO editTitle(int id, String title) {
+        Book book = bookRepository.getReferenceById(id);
+        book.setTitle(title);
+        BookDTO newBookDTO = bookMapper.bookFromBookDTO(bookRepository.save(book));
+        return newBookDTO;
     }
 
-    public Book editISBN(int id, String isbn){
-        mapBook.get(id).setIsbn(isbn);
-        return mapBook.get(id);
+    public BookDTO editISBN(int id, String isbn) {
+        Book book = bookRepository.getReferenceById(id);
+        book.setIsbn(isbn);
+        BookDTO newBookDTO = bookMapper.bookFromBookDTO(bookRepository.save(book));
+        return newBookDTO;
     }
 
-    public Book editPublishedDate(int id, LocalDate publishedDate){
-        mapBook.get(id).setPublishedDate(publishedDate);
-        return mapBook.get(id);
+    public BookDTO editPublishedDate(int id, LocalDate publishedDate) {
+        Book book = bookRepository.getReferenceById(id);
+        book.setPublishedDate(publishedDate);
+        BookDTO newBookDTO = bookMapper.bookFromBookDTO(bookRepository.save(book));
+        return newBookDTO;
     }
 
-    public Book editBook(int id, Author author, String title, String isbn, LocalDate publishedDate) {
-        Book b = null;
-        if (mapBook.containsKey(id)) {
+    public BookDTO editBook(int id, Author author, String title, String isbn, LocalDate publishedDate) {
+        BookDTO bookDTO = null;
+        if (bookRepository.existsById(id)) {
             if (author != null) {
-                b = editAuthor(id, author);
+                bookDTO = editAuthor(id, author);
             }
-            if (title != null) {
-                b = editTitle(id, title);
+            if (StringUtils.isNullOrEmpty(title)) {
+                bookDTO = editTitle(id, title);
             }
-            if (isbn != null) {
-                b = editISBN(id, isbn);
+            if (StringUtils.isNullOrEmpty(isbn)) {
+                bookDTO = editISBN(id, isbn);
             }
             if (publishedDate != null) {
-                b = editPublishedDate(id, publishedDate);
+                bookDTO = editPublishedDate(id, publishedDate);
             }
         }
-    return b;
+        return bookDTO;
     }
 }

@@ -1,16 +1,23 @@
 package com.example.demo.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jdk.jfr.Name;
+import lombok.*;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
+@Entity(name = "author")
 public class Author {
-    private  int id;
-    private  String name, biography;
+    @Id
+    private int id;
+    @Column(name="name")
+    private String name;
+    @Column(name="biography")
+    private String biography;
 
 }
