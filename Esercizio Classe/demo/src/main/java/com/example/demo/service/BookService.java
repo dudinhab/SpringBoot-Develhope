@@ -90,4 +90,9 @@ public class BookService {
         }
         return bookDTO;
     }
+
+    public BookDTO editBookCompleteBuild(BookDTO bookDTO, int id){
+        Book newBook = Book.builder().author(bookDTO.getAuthor()).title(bookDTO.getTitle()).isbn(bookDTO.getIsbn()).publishedDate(bookDTO.getPublishedDate()).id(id).build();
+        return bookMapper.bookFromBookDTO(newBook);
+    }
 }
