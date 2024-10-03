@@ -1,7 +1,6 @@
 package com.example.demo.controller;
 
 import com.example.demo.entity.Author;
-import com.example.demo.entity.Book;
 import com.example.demo.model.BookDTO;
 import com.example.demo.service.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +36,7 @@ public class BookController {
     }
 
     @GetMapping("/all")
-    public ResponseEntity<?> getMapBook() {
+    public ResponseEntity<?> getListBook() {
         List<BookDTO> listBookDTO = bookService.getListBookDTO();
         if (listBookDTO.isEmpty()) {
             return ResponseEntity.status(404).body("Not found any book!");
@@ -64,10 +63,10 @@ public class BookController {
     }
 
     @PutMapping("update/{id}")
-    public ResponseEntity<?> editAuthorComplete(@PathVariable("id") int id, @RequestBody Book book){
-        Book newBook = book.builder().author(book.getAuthor()).title(book.getTitle()).isbn(book.getIsbn()).publishedDate( book.getPublishedDate()).id(id).build();
-        if (newBook!=null) {
-            return ResponseEntity.ok(newBook);
+    public ResponseEntity<?> editAuthorComplete(@PathVariable("id") int id, @RequestBody BookDTO bookDTO){
+        BookDTO newBookDTO = bookService.editBookCompleteBuild(bookDTO, id);
+        if (newBookDTO!=null) {
+            return ResponseEntity.ok(newBookDTO);
         }
         return ResponseEntity.status(404).body("ID not found!");
     }
